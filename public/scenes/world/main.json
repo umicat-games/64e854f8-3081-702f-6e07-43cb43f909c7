@@ -41,8 +41,8 @@
       "kind": "rect",
       "role": "player",
       "transform": {
-        "x": 38.434986530029875,
-        "y": 602.6013052924727,
+        "x": 378.0658521681629,
+        "y": 612.5,
         "rotation": 0,
         "scaleX": 1,
         "scaleY": 1,
@@ -58,8 +58,8 @@
       "role": "obstacle",
       "script": "src/visuals/obstacle.ts",
       "transform": {
-        "x": 482.5846975106068,
-        "y": 612.259562854658,
+        "x": 640,
+        "y": 612,
         "rotation": 0,
         "scaleX": 1,
         "scaleY": 1,
