@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { loadWorldScene } from '@umicat/phaser-sdk';
+import { loadWorldScene, getEntityRegistry } from '@umicat/phaser-sdk';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -8,7 +8,6 @@ const JUMP_VEL     = -740;
 const EXTRA_GRAV   = 1500;   // added on top of world gravity
 const CUBE_SIZE    = 40;
 const LEVEL_W      = 20000;
-const GROUND_TOP   = 640;    // y of the top surface of the ground
 
 // ── Scene ──────────────────────────────────────────────────────────────────────
 export class GameScene extends Phaser.Scene {
@@ -21,6 +20,7 @@ export class GameScene extends Phaser.Scene {
   private cubeAngle = 0;
 
   // World
+  private groundTop = 640;      // derived from the ground entity in create()
   private groundGroup!:   Phaser.Physics.Arcade.StaticGroup;
   private obstacleGroup!: Phaser.Physics.Arcade.StaticGroup;
   private nextObstX = 800;
@@ -55,29 +55,48 @@ export class GameScene extends Phaser.Scene {
   async create(): Promise<void> {
     await loadWorldScene(this, this.sceneId);
 
-    // Blank 4×4 texture used for invisible physics bodies
+    // ── Expand physics world to cover the full level ────────────────────────
+    // loadWorldScene may shrink it to the scene JSON's world.width — override
+    this.physics.world.setBounds(0, 0, LEVEL_W, GAME_HEIGHT + 300);
+
+    // ── Read ground entity's actual position to derive groundTop ────────────
+    const registry = getEntityRegistry(this);
+    const groundObj = registry?.byRole('ground')[0] as Phaser.GameObjects.Rectangle | undefined;
+    if (groundObj) {
+      // groundObj.y is the center of the rect; subtract half height to get top edge
+      this.groundTop = groundObj.y - groundObj.height / 2;
+      // Expand the visual ground to span the full level in-game
+      groundObj.width  = LEVEL_W;
+      groundObj.x      = LEVEL_W / 2;
+    } else {
+      this.groundTop = GAME_HEIGHT - 80; // fallback if role was stripped by editor
+    }
+
+    // ── Blank texture for invisible physics bodies ──────────────────────────
     const blankGfx = this.add.graphics();
     blankGfx.fillStyle(0xffffff);
     blankGfx.fillRect(0, 0, 4, 4);
     blankGfx.generateTexture('blank', 4, 4);
     blankGfx.destroy();
 
-    // ── Physics ground (matches visual ground in scene JSON) ───────────────
+    // ── Physics ground ──────────────────────────────────────────────────────
+    // Use origin (0,0) + setSize with no centering so the body starts exactly
+    // at (0, groundTop) and spans the full level width.
     this.groundGroup = this.physics.add.staticGroup();
-    const gItem = this.groundGroup.create(
-      LEVEL_W / 2, GROUND_TOP + 40, 'blank'
-    ) as Phaser.Physics.Arcade.Image;
-    (gItem.body as Phaser.Physics.Arcade.StaticBody).setSize(LEVEL_W, 80);
+    const gItem = this.groundGroup.create(0, this.groundTop, 'blank') as Phaser.Physics.Arcade.Image;
+    gItem.setOrigin(0, 0);
+    const sb = gItem.body as Phaser.Physics.Arcade.StaticBody;
+    sb.setSize(LEVEL_W, GAME_HEIGHT - this.groundTop + 100, false);
+    sb.offset.set(0, 0);
     gItem.refreshBody();
     gItem.setAlpha(0);
 
-    // ── Obstacle group ─────────────────────────────────────────────────────
+    // ── Obstacle group ──────────────────────────────────────────────────────
     this.obstacleGroup = this.physics.add.staticGroup();
 
-    // ── Player physics rectangle ───────────────────────────────────────────
-    this.playerPhys = this.add.rectangle(
-      200, GROUND_TOP - CUBE_SIZE / 2, CUBE_SIZE, CUBE_SIZE, 0x000000, 0
-    );
+    // ── Player physics rectangle ────────────────────────────────────────────
+    const playerStartY = this.groundTop - CUBE_SIZE / 2;
+    this.playerPhys = this.add.rectangle(200, playerStartY, CUBE_SIZE, CUBE_SIZE, 0x000000, 0);
     this.playerPhys.setDepth(5);
     this.physics.add.existing(this.playerPhys);
     this.playerBody = this.playerPhys.body as Phaser.Physics.Arcade.Body;
@@ -86,33 +105,33 @@ export class GameScene extends Phaser.Scene {
     this.playerBody.setVelocityX(PLAYER_SPEED);
     this.playerBody.setCollideWorldBounds(false);
 
-    // ── Player visual ──────────────────────────────────────────────────────
+    // ── Player visual ───────────────────────────────────────────────────────
     this.playerGfx = this.add.graphics().setDepth(6);
     this.drawCube();
 
-    // ── Colliders ──────────────────────────────────────────────────────────
+    // ── Colliders ───────────────────────────────────────────────────────────
     this.physics.add.collider(this.playerPhys, this.groundGroup);
     this.physics.add.overlap(
       this.playerPhys, this.obstacleGroup,
       () => this.die(), undefined, this
     );
 
-    // ── Background grid decoration ─────────────────────────────────────────
+    // ── Background grid decoration ──────────────────────────────────────────
     const bgGfx = this.add.graphics().setDepth(0);
     bgGfx.lineStyle(1, 0x3344aa, 0.12);
-    for (let x = 0; x < LEVEL_W; x += 100) bgGfx.lineBetween(x, 0, x, GROUND_TOP);
-    for (let y = 0; y < GROUND_TOP; y += 100) bgGfx.lineBetween(0, y, LEVEL_W, y);
+    for (let x = 0; x < LEVEL_W; x += 100) bgGfx.lineBetween(x, 0, x, this.groundTop);
+    for (let y = 0; y < this.groundTop; y += 100) bgGfx.lineBetween(0, y, LEVEL_W, y);
     // Ground glow line
     bgGfx.lineStyle(3, 0x88aaff, 0.9);
-    bgGfx.lineBetween(0, GROUND_TOP, LEVEL_W, GROUND_TOP);
+    bgGfx.lineBetween(0, this.groundTop, LEVEL_W, this.groundTop);
     // Ground top-stripe accent
     bgGfx.fillStyle(0x3355cc, 1);
-    bgGfx.fillRect(0, GROUND_TOP, LEVEL_W, 4);
+    bgGfx.fillRect(0, this.groundTop, LEVEL_W, 4);
 
-    // ── Screen flash overlay (fixed to camera) ─────────────────────────────
+    // ── Screen flash overlay (fixed to camera) ──────────────────────────────
     this.flashGfx = this.add.graphics().setDepth(900).setScrollFactor(0).setAlpha(0);
 
-    // ── HUD ────────────────────────────────────────────────────────────────
+    // ── HUD ─────────────────────────────────────────────────────────────────
     this.scoreText = this.add.text(GAME_WIDTH / 2, 24, '0%', {
       fontFamily: 'Arial Black, Impact, sans-serif',
       fontSize: '34px',
@@ -136,7 +155,7 @@ export class GameScene extends Phaser.Scene {
       color: '#ffffff',
     }).setAlpha(0.5).setOrigin(0.5, 1).setScrollFactor(0).setDepth(100);
 
-    // ── Input ──────────────────────────────────────────────────────────────
+    // ── Input ────────────────────────────────────────────────────────────────
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
       .on('down', this.tryJump, this);
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
@@ -145,18 +164,17 @@ export class GameScene extends Phaser.Scene {
       .on('down', this.tryJump, this);
     this.input.on('pointerdown', this.tryJump, this);
 
-    // ── Camera ─────────────────────────────────────────────────────────────
-    // setBounds already set by scene JSON, but ensure it matches level width
+    // ── Camera ───────────────────────────────────────────────────────────────
     this.cameras.main.setBounds(0, 0, LEVEL_W, GAME_HEIGHT);
     // Follow horizontally; offset so player sits ~1/4 from left edge
     this.cameras.main.startFollow(this.playerPhys, false, 0.1, 1);
     this.cameras.main.setFollowOffset(GAME_WIDTH * 0.2, 0);
 
-    // ── Pre-spawn first stretch of obstacles ───────────────────────────────
+    // ── Pre-spawn first stretch of obstacles ─────────────────────────────────
     while (this.nextObstX < 4000) this.spawnObstacle();
   }
 
-  // ── Cube drawing ───────────────────────────────────────────────────────────
+  // ── Cube drawing ────────────────────────────────────────────────────────────
   private drawCube(): void {
     const g = this.playerGfx;
     g.clear();
@@ -181,7 +199,7 @@ export class GameScene extends Phaser.Scene {
     g.fillCircle( h - o,  h - o, r);
   }
 
-  // ── Obstacle spawning ──────────────────────────────────────────────────────
+  // ── Obstacle spawning ───────────────────────────────────────────────────────
   private spawnObstacle(): void {
     const x    = this.nextObstX;
     const roll = Phaser.Math.Between(0, 7);
@@ -199,9 +217,9 @@ export class GameScene extends Phaser.Scene {
 
     } else if (roll === 3) {
       // 3 spikes
-      this.makeSpike(x,       40, 40);
-      this.makeSpike(x + 40,  40, 40);
-      this.makeSpike(x + 80,  40, 40);
+      this.makeSpike(x,      40, 40);
+      this.makeSpike(x + 40, 40, 40);
+      this.makeSpike(x + 80, 40, 40);
       this.nextObstX = x + 120 + this.spawnGap + 60;
 
     } else if (roll === 4) {
@@ -220,7 +238,7 @@ export class GameScene extends Phaser.Scene {
       this.nextObstX = x + 160 + this.spawnGap;
 
     } else {
-      // Spike then block close together
+      // Spike then block
       this.makeSpike(x, 40, 40);
       this.makeBlock(x + 80, 40, 60);
       this.nextObstX = x + 120 + this.spawnGap + 40;
@@ -228,9 +246,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   private makeSpike(x: number, w: number, h: number): void {
+    const gt  = this.groundTop;
     const gfx = this.add.graphics().setDepth(4);
     gfx.x = x;
-    gfx.y = GROUND_TOP - h;
+    gfx.y = gt - h;
     // Main triangle
     gfx.fillStyle(0xff3333);
     gfx.fillTriangle(0, h, w / 2, 0, w, h);
@@ -243,18 +262,20 @@ export class GameScene extends Phaser.Scene {
 
     // Smaller hitbox (fair, not pixel-perfect)
     const bw = w * 0.50, bh = h * 0.65;
-    const item = this.obstacleGroup.create(
-      x + w / 2, GROUND_TOP - bh / 2 - (h - bh) * 0.5, 'blank'
-    ) as Phaser.Physics.Arcade.Image;
+    const cx = x + w / 2;
+    const cy = gt - bh / 2 - (h - bh) * 0.5;
+    const item = this.obstacleGroup.create(cx, cy, 'blank') as Phaser.Physics.Arcade.Image;
+    item.setOrigin(0.5, 0.5);
     (item.body as Phaser.Physics.Arcade.StaticBody).setSize(bw, bh);
     item.refreshBody();
     item.setAlpha(0);
   }
 
   private makeBlock(x: number, w: number, h: number): void {
+    const gt  = this.groundTop;
     const gfx = this.add.graphics().setDepth(4);
     gfx.x = x;
-    gfx.y = GROUND_TOP - h;
+    gfx.y = gt - h;
     // Body
     gfx.fillStyle(0x5566dd);
     gfx.fillRect(0, 0, w, h);
@@ -272,15 +293,16 @@ export class GameScene extends Phaser.Scene {
     gfx.lineStyle(1, 0x8899ff, 0.2);
     for (let sy = 20; sy < h; sy += 20) gfx.lineBetween(0, sy, w, sy);
 
-    const item = this.obstacleGroup.create(
-      x + w / 2, GROUND_TOP - h / 2, 'blank'
-    ) as Phaser.Physics.Arcade.Image;
+    const cx = x + w / 2;
+    const cy = gt - h / 2;
+    const item = this.obstacleGroup.create(cx, cy, 'blank') as Phaser.Physics.Arcade.Image;
+    item.setOrigin(0.5, 0.5);
     (item.body as Phaser.Physics.Arcade.StaticBody).setSize(w, h);
     item.refreshBody();
     item.setAlpha(0);
   }
 
-  // ── Jump ───────────────────────────────────────────────────────────────────
+  // ── Jump ────────────────────────────────────────────────────────────────────
   private tryJump(): void {
     if (!this.alive) return;
     if (this.playerBody.blocked.down) {
@@ -292,7 +314,7 @@ export class GameScene extends Phaser.Scene {
         dot.fillStyle(0xf7aa1e, 0.85);
         dot.fillCircle(0, 0, Phaser.Math.Between(2, 5));
         dot.x = cx + Phaser.Math.Between(-18, 18);
-        dot.y = GROUND_TOP;
+        dot.y = this.groundTop;
         this.tweens.add({
           targets: dot,
           x: dot.x + Phaser.Math.Between(-28, 28),
@@ -305,7 +327,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  // ── Death ──────────────────────────────────────────────────────────────────
+  // ── Death ────────────────────────────────────────────────────────────────────
   private die(): void {
     if (this.deathHandled) return;
     this.deathHandled = true;
@@ -351,7 +373,7 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(1000, () => this.scene.restart({ sceneId: this.sceneId }));
   }
 
-  // ── update ─────────────────────────────────────────────────────────────────
+  // ── update ───────────────────────────────────────────────────────────────────
   update(_time: number, delta: number): void {
     if (!this.alive) return;
 

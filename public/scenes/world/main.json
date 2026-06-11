@@ -23,6 +23,7 @@
     {
       "id": "e-mq8wrquq-2xfy",
       "kind": "rect",
+      "role": "ground",
       "transform": {
         "x": 1361.0175632884004,
         "y": 696.3633018980272,

@@ -31,5 +31,7 @@
 - SPACE / UP / W / tap/click → jump (only when on ground)
 
 ## This turn
-- Set selected rect entity as platform (`role: "ground"`, expanded to 20 000 × 80 px, repositioned to y=680)
-- Built full Geometry Dash core: auto-scroll, jump, cube rotation, procedural obstacles, death/respawn, score HUD
+- Fixed player falling through floor: two root causes:
+  1. `physics.world.setBounds` was 1280×720 from the scene JSON — physics ground at x=10 000 was outside the world and never collided. Fix: call `this.physics.world.setBounds(0, 0, LEVEL_W, GAME_HEIGHT+300)` immediately after loadWorldScene to expand the physics simulation.
+  2. `GROUND_TOP` was hardcoded to 640 but entity was moved to y≈696 (top surface ≈673). Fix: read entity's actual y/height via getEntityRegistry after load and derive `this.groundTop` dynamically.
+- Also fixed ground body to use origin (0,0) + `setSize(..., false)` + `sb.offset.set(0,0)` + `refreshBody()` for reliable positioning without the centering math.
