@@ -4,7 +4,7 @@
   "name": "Main",
   "type": "world",
   "world": {
-    "width": 20000,
+    "width": 1280,
     "height": 720,
     "background": {
       "color": "#1a1a2e"
@@ -15,7 +15,7 @@
     "bounds": {
       "x": 0,
       "y": 0,
-      "width": 20000,
+      "width": 1280,
       "height": 720
     }
   },
@@ -23,17 +23,16 @@
     {
       "id": "e-mq8wrquq-2xfy",
       "kind": "rect",
-      "role": "ground",
       "transform": {
-        "x": 10000,
-        "y": 680,
+        "x": 1359.8518074009469,
+        "y": 645.2804239543004,
         "rotation": 0,
         "scaleX": 1,
         "scaleY": 1,
-        "depth": 2
+        "depth": 10
       },
-      "width": 20000,
-      "height": 80,
+      "width": 2718.2963851981062,
+      "height": 146.56084790860086,
       "fillColor": "#4662D8"
     }
   ]
