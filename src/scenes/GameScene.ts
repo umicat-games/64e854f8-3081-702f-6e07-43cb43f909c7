@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { loadWorldScene, getEntityRegistry } from '@umicat/phaser-sdk';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
 
-const PLAYER_SPEED = 220;
+const PLAYER_SPEED = 280;
 const JUMP_VELOCITY = -520;
 
 /**
@@ -25,12 +25,7 @@ const JUMP_VELOCITY = -520;
  */
 export class GameScene extends Phaser.Scene {
   private sceneId!: string;
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-  private wasd!: {
-    up: Phaser.Input.Keyboard.Key;
-    left: Phaser.Input.Keyboard.Key;
-    right: Phaser.Input.Keyboard.Key;
-  };
+  private spaceKey!: Phaser.Input.Keyboard.Key;
   private player: Phaser.Physics.Arcade.Body | null = null;
 
   constructor() {
@@ -79,32 +74,26 @@ export class GameScene extends Phaser.Scene {
     }
 
     // ── Input setup ──────────────────────────────────────────────────
-    this.cursors = this.input.keyboard!.createCursorKeys();
-    this.wasd = {
-      up:    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.W),
-      left:  this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-      right: this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D),
-    };
+    this.spaceKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    // Click / tap also triggers a jump
+    this.input.on('pointerdown', () => {
+      if (this.player?.blocked.down) {
+        this.player.setVelocityY(JUMP_VELOCITY);
+      }
+    });
   }
 
   update(_time: number, _delta: number): void {
     if (!this.player) return;
 
-    const body   = this.player;
-    const left   = this.cursors.left.isDown  || this.wasd.left.isDown;
-    const right  = this.cursors.right.isDown || this.wasd.right.isDown;
-    const jump   = Phaser.Input.Keyboard.JustDown(this.cursors.up)  ||
-                   Phaser.Input.Keyboard.JustDown(this.wasd.up)      ||
-                   Phaser.Input.Keyboard.JustDown(this.cursors.space);
-    const onGround = body.blocked.down;
+    const body = this.player;
 
-    // Horizontal movement
-    if (left)       body.setVelocityX(-PLAYER_SPEED);
-    else if (right) body.setVelocityX(PLAYER_SPEED);
-    else            body.setVelocityX(0);
+    // Auto-run: always move forward at constant speed
+    body.setVelocityX(PLAYER_SPEED);
 
-    // Jump — only when touching ground
-    if (jump && onGround) {
+    // Jump via Space — only when on the ground
+    if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && body.blocked.down) {
       body.setVelocityY(JUMP_VELOCITY);
     }
   }
