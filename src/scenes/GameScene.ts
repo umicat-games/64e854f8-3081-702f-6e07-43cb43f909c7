@@ -44,9 +44,27 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5);
     }
 
-    // Behavior wiring goes below this line. Look entities up via
-    //   const player = getEntityRegistry(this)?.byRole('player')[0];
-    // See SDK-GUIDE.md and `scenes/manifest.json`.
+    // ── Physics wiring ────────────────────────────────────────────────
+    const registry = getEntityRegistry(this);
+
+    // Give every platform-role entity a static arcade body.
+    const platformObjs = (registry?.byRole('platform') ?? []) as Phaser.GameObjects.GameObject[];
+    for (const obj of platformObjs) {
+      this.physics.add.existing(obj, true); // true = static body
+    }
+
+    // Give every player-role entity a dynamic arcade body + gravity,
+    // then collide it with all platforms.
+    const playerObjs = (registry?.byRole('player') ?? []) as Phaser.GameObjects.GameObject[];
+    for (const playerObj of playerObjs) {
+      this.physics.add.existing(playerObj, false);
+      const body = (playerObj as Phaser.Physics.Arcade.Image).body as Phaser.Physics.Arcade.Body;
+      body.setGravityY(600);
+      body.setCollideWorldBounds(true);
+      for (const platformObj of platformObjs) {
+        this.physics.add.collider(playerObj, platformObj);
+      }
+    }
   }
 
   update(_time: number, _delta: number): void {

@@ -6,11 +6,50 @@
   "world": {
     "width": 1280,
     "height": 720,
-    "background": { "color": "#1a1a2e" }
+    "background": {
+      "color": "#1a1a2e"
+    }
   },
   "camera": {
     "follow": null,
-    "bounds": { "x": 0, "y": 0, "width": 1280, "height": 720 }
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 720
+    }
   },
-  "entities": []
+  "entities": [
+    {
+      "id": "e-mq9g3ou3-jurs",
+      "kind": "rect",
+      "role": "platform",
+      "transform": {
+        "x": 692.4171220562732,
+        "y": 675,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "width": 1381.1657558874535,
+      "height": 86,
+      "fillColor": "#4662D8"
+    },
+    {
+      "id": "e-mq9g4mby-vgoc",
+      "kind": "rect",
+      "transform": {
+        "x": 38.434986530029875,
+        "y": 602.6013052924727,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "width": 30,
+      "height": 30,
+      "fillColor": "#4662D8"
+    }
+  ]
 }
