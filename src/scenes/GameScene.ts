@@ -36,6 +36,12 @@ export class GameScene extends Phaser.Scene {
 
   init(data: { sceneId: string }): void {
     this.sceneId = data.sceneId;
+    // scene.restart() reuses this Scene instance — clear the per-run
+    // references here or the post-restart create() keeps the destroyed
+    // previous run's body/GO (player stops moving, camera follows a ghost).
+    this.player = null;
+    this.playerObj = null;
+    this.gameOver = false;
   }
 
   async create(): Promise<void> {
@@ -99,16 +105,19 @@ export class GameScene extends Phaser.Scene {
     // ── Obstacle collision → game over ───────────────────────────────
     const obstacleObjs = (registry?.byRole('obstacle') ?? []) as Phaser.GameObjects.GameObject[];
     for (const obs of obstacleObjs) {
-      this.physics.add.existing(obs, true); // static body
-      // Graphics objects have no natural width/height for the physics
-      // engine — set the body size explicitly so the overlap fires.
-      const obsBody = (obs as Phaser.Physics.Arcade.Image).body as Phaser.Physics.Arcade.StaticBody;
-      obsBody.setSize(40, 40);
-      obsBody.reset((obs as Phaser.GameObjects.Graphics).x, (obs as Phaser.GameObjects.Graphics).y);
+      // The obstacle visual is a Graphics (code-rendered) — Graphics has no
+      // origin/getTopLeft, so a static body attached to it can't be sized or
+      // positioned reliably (StaticBody.reset() throws "getTopLeft is not a
+      // function", which killed the whole scene boot). Use an invisible
+      // static Zone centered on the obstacle as the collision proxy; the
+      // Graphics stays purely visual.
+      const g = obs as Phaser.GameObjects.Graphics;
+      const hitZone = this.add.zone(g.x, g.y, 40, 40);
+      this.physics.add.existing(hitZone, true);
       if (this.playerObj) {
         this.physics.add.overlap(
           this.playerObj,
-          obs,
+          hitZone,
           () => { this.triggerGameOver(); },
         );
       }
