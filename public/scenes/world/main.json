@@ -58,7 +58,7 @@
       "role": "obstacle",
       "script": "src/visuals/obstacle.ts",
       "transform": {
-        "x": 640,
+        "x": 672.4171220562732,
         "y": 612,
         "rotation": 0,
         "scaleX": 1,
