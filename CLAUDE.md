@@ -1,20 +1,26 @@
 # Game: Unnamed Platformer
 
 ## Genre & Core Mechanic
-Side-scrolling platformer. Player stands on platforms, with gravity pulling them down.
+Side-scrolling platformer. Player has gravity, walks left/right, and jumps on platforms.
 
 ## Features Implemented
 - Scene-as-data world (`public/scenes/world/main.json`)
-- Platform entity (role: "platform") — large blue rect at y=675 acting as solid ground
-- Static arcade physics bodies automatically applied to all `role: "platform"` entities
-- Dynamic arcade bodies (gravity + world bounds collision) automatically applied to all `role: "player"` entities
-- Collider wired between all player-role and platform-role entities
+- Platform entity (`e-mq9g3ou3-jurs`, role: "platform") — large blue rect at y=675, solid ground
+- Player entity (`e-mq9g4mby-vgoc`, role: "player") — yellow 30×30 rect with gravity + collision
+- Static arcade physics bodies on all `role: "platform"` entities
+- Dynamic arcade bodies (gravity 600 + world bounds) on all `role: "player"` entities
+- Collider between player and platform
+- Keyboard controls: Arrow keys or WASD to move left/right, Up/W/Space to jump (only when on ground)
 
 ## Key Implementation Details
-- **GameScene.ts**: After `loadWorldScene`, looks up `byRole('platform')` and adds static physics bodies; looks up `byRole('player')` and adds dynamic bodies with gravity, then sets up colliders.
-- **main.json entity roles**: `role: "platform"` on any rect/sprite makes it solid ground; `role: "player"` on any entity gives it dynamic physics + collision.
-- **No player entity added yet** — adding a player-role entity in the scene will automatically get physics + platform collision.
+- **GameScene.ts**: After `loadWorldScene`, wires static bodies to platforms and dynamic bodies to players, registers colliders, then handles input each frame in `update()`.
+- **Player body reference**: stored as `this.player` (Arcade.Body) for update loop access.
+- **Jump guard**: `body.blocked.down` ensures the player can only jump when touching a platform.
+- **Constants**: `PLAYER_SPEED = 220`, `JUMP_VELOCITY = -520` at top of file.
+- **Role convention**: `role: "platform"` → static solid body; `role: "player"` → dynamic body + controls.
 
 ## What Changed This Turn
-- Added `role: "platform"` to entity `e-mq9g3ou3-jurs` (the large floor rect) in `main.json`
-- Wired platform static bodies and player collision in `GameScene.ts`
+- Added `role: "player"` to entity `e-mq9g4mby-vgoc` and changed its color to yellow (#e8c84a)
+- Re-confirmed `role: "platform"` on `e-mq9g3ou3-jurs` (was lost after editor interaction)
+- Added `this.player`, `this.cursors`, `this.wasd` fields to GameScene
+- Wired full keyboard movement (left/right/jump) in `update()`
