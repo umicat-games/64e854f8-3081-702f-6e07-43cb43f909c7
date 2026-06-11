@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   private sceneId!: string;
   private spaceKey!: Phaser.Input.Keyboard.Key;
   private player: Phaser.Physics.Arcade.Body | null = null;
+  private playerObj: Phaser.GameObjects.GameObject | null = null;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -38,6 +39,8 @@ export class GameScene extends Phaser.Scene {
 
   async create(): Promise<void> {
     const { sceneFile } = await loadWorldScene(this, this.sceneId);
+    const worldWidth  = sceneFile.world?.width  ?? GAME_WIDTH;
+    const worldHeight = sceneFile.world?.height ?? GAME_HEIGHT;
 
     if (sceneFile.entities.length === 0) {
       this.add
@@ -69,8 +72,27 @@ export class GameScene extends Phaser.Scene {
       for (const platformObj of platformObjs) {
         this.physics.add.collider(playerObj, platformObj);
       }
-      // Store reference to first player body for input handling.
-      if (!this.player) this.player = body;
+      // Store reference to first player body + game object for input + camera.
+      if (!this.player) {
+        this.player    = body;
+        this.playerObj = playerObj;
+      }
+    }
+
+    // ── Camera ───────────────────────────────────────────────────────
+    // Align physics world bounds with the scene world size.
+    this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
+
+    if (this.playerObj) {
+      // Follow the player; clamp to world bounds so the camera stops
+      // at the right edge of the platform.
+      this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
+      this.cameras.main.startFollow(
+        this.playerObj as Phaser.GameObjects.GameObject,
+        true,   // roundPixels
+        1,      // lerpX — snap instantly on X
+        1,      // lerpY — snap instantly on Y
+      );
     }
 
     // ── Input setup ──────────────────────────────────────────────────

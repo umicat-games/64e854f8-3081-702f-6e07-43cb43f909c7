@@ -4,7 +4,7 @@
   "name": "Main",
   "type": "world",
   "world": {
-    "width": 1280,
+    "width": 1383,
     "height": 720,
     "background": {
       "color": "#1a1a2e"
@@ -15,7 +15,7 @@
     "bounds": {
       "x": 0,
       "y": 0,
-      "width": 1280,
+      "width": 1383,
       "height": 720
     }
   },
