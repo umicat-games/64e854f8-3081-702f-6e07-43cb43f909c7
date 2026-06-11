@@ -28,6 +28,7 @@ export class GameScene extends Phaser.Scene {
   private spaceKey!: Phaser.Input.Keyboard.Key;
   private player: Phaser.Physics.Arcade.Body | null = null;
   private playerObj: Phaser.GameObjects.GameObject | null = null;
+  private gameOver = false;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -95,6 +96,19 @@ export class GameScene extends Phaser.Scene {
       );
     }
 
+    // ── Obstacle collision → game over ───────────────────────────────
+    const obstacleObjs = (registry?.byRole('obstacle') ?? []) as Phaser.GameObjects.GameObject[];
+    for (const obs of obstacleObjs) {
+      this.physics.add.existing(obs, true); // static body
+      if (this.playerObj) {
+        this.physics.add.overlap(
+          this.playerObj,
+          obs,
+          () => { this.triggerGameOver(); },
+        );
+      }
+    }
+
     // ── Input setup ──────────────────────────────────────────────────
     this.spaceKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
@@ -106,8 +120,65 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  private triggerGameOver(): void {
+    if (this.gameOver) return;
+    this.gameOver = true;
+
+    // Stop the player dead
+    if (this.player) {
+      this.player.setVelocity(0, 0);
+      this.player.setGravityY(0);
+    }
+
+    // Red flash on the player
+    if (this.playerObj) {
+      this.tweens.add({
+        targets: this.playerObj,
+        alpha: { from: 1, to: 0.1 },
+        duration: 80,
+        yoyo: true,
+        repeat: 3,
+      });
+    }
+
+    // Dark overlay
+    const camX = this.cameras.main.scrollX;
+    const camY = this.cameras.main.scrollY;
+    const overlay = this.add
+      .rectangle(camX + GAME_WIDTH / 2, camY + GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0)
+      .setDepth(1000);
+    this.tweens.add({ targets: overlay, alpha: 0.6, duration: 400 });
+
+    // "GAME OVER" text
+    const goCfg = { fontSize: '64px', color: '#ff3e3e', fontStyle: 'bold' };
+    this.add
+      .text(camX + GAME_WIDTH / 2, camY + GAME_HEIGHT / 2 - 40, 'GAME OVER', goCfg)
+      .setOrigin(0.5)
+      .setDepth(1001);
+
+    // Restart hint
+    this.add
+      .text(camX + GAME_WIDTH / 2, camY + GAME_HEIGHT / 2 + 40, 'tap or press Space to restart', {
+        fontSize: '24px',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5)
+      .setDepth(1001);
+
+    // Restart on next tap / space after a short grace period
+    this.time.delayedCall(600, () => {
+      this.input.once('pointerdown', () => this.restartGame());
+      this.input.keyboard!.once('keydown-SPACE', () => this.restartGame());
+    });
+  }
+
+  private restartGame(): void {
+    this.gameOver = false;
+    this.scene.restart({ sceneId: this.sceneId });
+  }
+
   update(_time: number, _delta: number): void {
-    if (!this.player) return;
+    if (!this.player || this.gameOver) return;
 
     const body = this.player;
 
