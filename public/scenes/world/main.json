@@ -51,6 +51,21 @@
       "width": 30,
       "height": 30,
       "fillColor": "#e8c84a"
+    },
+    {
+      "id": "e-mq9gzi8s-yynw",
+      "kind": "rect",
+      "transform": {
+        "x": 418.07923199261984,
+        "y": 598.6393430807743,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "width": 30,
+      "height": 30,
+      "fillColor": "#d846aa"
     }
   ]
 }
