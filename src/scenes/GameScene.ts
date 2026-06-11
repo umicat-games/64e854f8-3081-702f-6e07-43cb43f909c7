@@ -100,6 +100,11 @@ export class GameScene extends Phaser.Scene {
     const obstacleObjs = (registry?.byRole('obstacle') ?? []) as Phaser.GameObjects.GameObject[];
     for (const obs of obstacleObjs) {
       this.physics.add.existing(obs, true); // static body
+      // Graphics objects have no natural width/height for the physics
+      // engine — set the body size explicitly so the overlap fires.
+      const obsBody = (obs as Phaser.Physics.Arcade.Image).body as Phaser.Physics.Arcade.StaticBody;
+      obsBody.setSize(40, 40);
+      obsBody.reset((obs as Phaser.GameObjects.Graphics).x, (obs as Phaser.GameObjects.Graphics).y);
       if (this.playerObj) {
         this.physics.add.overlap(
           this.playerObj,
