@@ -22,6 +22,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from '../config';
  */
 export class GameScene extends Phaser.Scene {
   private sceneId!: string;
+  private spinningRect?: Phaser.GameObjects.Rectangle;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -44,12 +45,17 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5);
     }
 
-    // Behavior wiring goes below this line. Look entities up via
-    //   const player = getEntityRegistry(this)?.byRole('player')[0];
-    // See SDK-GUIDE.md and `scenes/manifest.json`.
+    // Behavior wiring goes below this line.
+    const registry = getEntityRegistry(this);
+    const rectObj = registry?.byId('e-mqa9j80o-rj0d');
+    if (rectObj) {
+      this.spinningRect = rectObj as Phaser.GameObjects.Rectangle;
+    }
   }
 
-  update(_time: number, _delta: number): void {
-    // Agent-written game-loop logic. Empty by default.
+  update(_time: number, delta: number): void {
+    if (this.spinningRect) {
+      this.spinningRect.angle += 90 * (delta / 1000); // 90 degrees per second
+    }
   }
 }
