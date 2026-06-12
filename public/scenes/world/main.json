@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "main",
-  "name": "Main",
+  "name": "world1Game",
   "type": "world",
   "world": {
     "width": 1280,

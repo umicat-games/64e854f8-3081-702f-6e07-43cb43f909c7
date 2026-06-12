@@ -9,7 +9,8 @@
       "id": "main",
       "type": "world",
       "file": "world/main.json",
-      "hud": "game-hud"
+      "hud": "game-hud",
+      "name": "world1Game"
     }
   ],
   "huds": [
