@@ -23,7 +23,9 @@
     {
       "id": "folder",
       "name": "World1",
-      "sceneIds": []
+      "sceneIds": [
+        "main"
+      ]
     }
   ]
 }
