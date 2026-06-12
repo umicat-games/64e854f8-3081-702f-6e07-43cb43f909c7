@@ -10,13 +10,6 @@
       "type": "world",
       "file": "world/main.json",
       "hud": "game-hud"
-    },
-    {
-      "id": "homescene",
-      "name": "HomeScene",
-      "type": "world",
-      "file": "world/homescene.json",
-      "hud": "game-hud"
     }
   ],
   "huds": [
@@ -29,10 +22,8 @@
   "groups": [
     {
       "id": "folder",
-      "name": "Home",
-      "sceneIds": [
-        "homescene"
-      ]
+      "name": "New folder",
+      "sceneIds": []
     }
   ]
 }
