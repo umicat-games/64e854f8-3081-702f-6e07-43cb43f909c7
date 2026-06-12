@@ -33,6 +33,19 @@
       "width": 517,
       "height": 64,
       "fillColor": "#d8b146"
+    },
+    {
+      "id": "e-mqacxczo-hngb",
+      "kind": "prefab-ref",
+      "transform": {
+        "x": 328.88889086533595,
+        "y": 442.2440769704439,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "prefabId": "player"
     }
   ]
 }

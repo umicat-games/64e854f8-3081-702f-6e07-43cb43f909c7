@@ -32,7 +32,7 @@
       "role": "spinner",
       "width": 64,
       "height": 64,
-      "fillColor": "#825326",
+      "fillColor": "#fc1d1d",
       "id": "player"
     }
   ]
