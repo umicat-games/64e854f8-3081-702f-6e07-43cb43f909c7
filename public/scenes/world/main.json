@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "main",
-  "name": "Menu",
+  "name": "MenuScene",
   "type": "world",
   "world": {
     "width": 1280,

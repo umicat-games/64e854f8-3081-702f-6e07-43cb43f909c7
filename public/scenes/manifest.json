@@ -10,7 +10,7 @@
       "type": "world",
       "file": "world/main.json",
       "hud": "game-hud",
-      "name": "Menu"
+      "name": "MenuScene"
     },
     {
       "id": "gamescene",
