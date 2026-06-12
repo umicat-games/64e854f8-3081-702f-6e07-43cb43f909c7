@@ -18,5 +18,21 @@
       "height": 720
     }
   },
-  "entities": []
+  "entities": [
+    {
+      "id": "e-mqa9j80o-rj0d",
+      "kind": "rect",
+      "transform": {
+        "x": 376.62087912087907,
+        "y": 532.6373626373627,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "width": 292.75824175824187,
+      "height": 222.72527472527474,
+      "fillColor": "#f2740d"
+    }
+  ]
 }
