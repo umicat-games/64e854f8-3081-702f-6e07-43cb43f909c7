@@ -36,7 +36,7 @@
   "groups": [
     {
       "id": "folder",
-      "name": "New folder",
+      "name": "Test1",
       "sceneIds": [
         "level1",
         "level-2"
