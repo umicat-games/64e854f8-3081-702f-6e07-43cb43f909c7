@@ -49,7 +49,13 @@ export class GameScene extends Phaser.Scene {
     // See SDK-GUIDE.md and `scenes/manifest.json`.
   }
 
-  update(_time: number, _delta: number): void {
-    // Agent-written game-loop logic. Empty by default.
+  update(_time: number, delta: number): void {
+    // Spin all entities with the "spinner" role
+    const registry = getEntityRegistry(this);
+    if (registry) {
+      for (const go of registry.byRole('spinner')) {
+        (go as Phaser.GameObjects.GameObject & { angle: number }).angle += 90 * (delta / 1000);
+      }
+    }
   }
 }
