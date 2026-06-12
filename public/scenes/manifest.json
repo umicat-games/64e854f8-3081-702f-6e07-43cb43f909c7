@@ -42,5 +42,14 @@
         "level-2"
       ]
     }
+  ],
+  "prefabs": [
+    {
+      "kind": "rect",
+      "width": 64,
+      "height": 64,
+      "fillColor": "#4662D8",
+      "id": "player1"
+    }
   ]
 }
