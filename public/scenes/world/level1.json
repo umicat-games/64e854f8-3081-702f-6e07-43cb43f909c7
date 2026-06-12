@@ -18,5 +18,19 @@
       "height": 720
     }
   },
-  "entities": []
+  "entities": [
+    {
+      "id": "e-mqacs1kv-0yvm",
+      "kind": "prefab-ref",
+      "transform": {
+        "x": 412.70674095204555,
+        "y": 312.8888908653359,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "prefabId": "player"
+    }
+  ]
 }
