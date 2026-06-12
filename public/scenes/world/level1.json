@@ -31,6 +31,21 @@
         "depth": 10
       },
       "prefabId": "player"
+    },
+    {
+      "id": "e-mqacsrx7-npsi",
+      "kind": "rect",
+      "transform": {
+        "x": 588.8533704760227,
+        "y": 617.0928994797421,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "width": 480.29325904795445,
+      "height": 64,
+      "fillColor": "#6dd846"
     }
   ]
 }
