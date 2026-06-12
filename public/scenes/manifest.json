@@ -26,6 +26,11 @@
       "sceneIds": [
         "main"
       ]
+    },
+    {
+      "id": "folder-2",
+      "name": "New folder",
+      "sceneIds": []
     }
   ]
 }
