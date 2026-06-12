@@ -30,7 +30,9 @@
     {
       "id": "folder",
       "name": "Home",
-      "sceneIds": []
+      "sceneIds": [
+        "homescene"
+      ]
     }
   ]
 }
