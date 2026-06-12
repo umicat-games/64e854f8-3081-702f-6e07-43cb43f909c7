@@ -26,5 +26,12 @@
       "file": "hud/game-hud.json"
     }
   ],
-  "assets": []
+  "assets": [],
+  "groups": [
+    {
+      "id": "folder",
+      "name": "New folder",
+      "sceneIds": []
+    }
+  ]
 }
