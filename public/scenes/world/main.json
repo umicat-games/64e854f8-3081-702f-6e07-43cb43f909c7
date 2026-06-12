@@ -39,12 +39,12 @@
       "id": "e-mqac78wh-7fqv",
       "kind": "prefab-ref",
       "transform": {
-        "x": 224,
-        "y": 584,
+        "x": 32,
+        "y": 688,
         "rotation": 0,
         "scaleX": 1,
         "scaleY": 1,
-        "depth": 10
+        "depth": 20
       },
       "prefabId": "player1"
     }
