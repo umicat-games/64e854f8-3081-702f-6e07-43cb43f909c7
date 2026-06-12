@@ -17,6 +17,13 @@
       "type": "world",
       "file": "world/level1.json",
       "hud": "game-hud"
+    },
+    {
+      "id": "level-2",
+      "name": "Level 2",
+      "type": "world",
+      "file": "world/level-2.json",
+      "hud": "game-hud"
     }
   ],
   "huds": [
@@ -31,7 +38,8 @@
       "id": "folder",
       "name": "New folder",
       "sceneIds": [
-        "level1"
+        "level1",
+        "level-2"
       ]
     }
   ]
