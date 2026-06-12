@@ -11,6 +11,13 @@
       "file": "world/main.json",
       "hud": "game-hud",
       "name": "Menu"
+    },
+    {
+      "id": "gamescene",
+      "name": "GameScene",
+      "type": "world",
+      "file": "world/gamescene.json",
+      "hud": "game-hud"
     }
   ],
   "huds": [
