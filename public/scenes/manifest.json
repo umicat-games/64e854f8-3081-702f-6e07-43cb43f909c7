@@ -10,6 +10,13 @@
       "type": "world",
       "file": "world/main.json",
       "hud": "game-hud"
+    },
+    {
+      "id": "level1",
+      "name": "level1",
+      "type": "world",
+      "file": "world/level1.json",
+      "hud": "game-hud"
     }
   ],
   "huds": [
