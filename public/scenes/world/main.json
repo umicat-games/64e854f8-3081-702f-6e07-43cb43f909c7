@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "main",
-  "name": "MenuScene",
+  "name": "Main",
   "type": "world",
   "world": {
     "width": 1280,
@@ -19,5 +19,21 @@
       "height": 720
     }
   },
-  "entities": []
+  "entities": [
+    {
+      "id": "e-mqa7xf3q-92mn",
+      "kind": "rect",
+      "transform": {
+        "x": 685.5,
+        "y": 635,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "width": 1371,
+      "height": 170,
+      "fillColor": "#4662D8"
+    }
+  ]
 }

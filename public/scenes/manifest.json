@@ -22,14 +22,7 @@
   "groups": [
     {
       "id": "folder",
-      "name": "Game",
-      "sceneIds": [
-        "main"
-      ]
-    },
-    {
-      "id": "folder-2",
-      "name": "Menu",
+      "name": "New folder",
       "sceneIds": []
     }
   ]
