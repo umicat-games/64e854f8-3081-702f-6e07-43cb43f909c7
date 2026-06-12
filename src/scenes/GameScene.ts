@@ -49,7 +49,13 @@ export class GameScene extends Phaser.Scene {
     // See SDK-GUIDE.md and `scenes/manifest.json`.
   }
 
-  update(_time: number, _delta: number): void {
-    // Agent-written game-loop logic. Empty by default.
+  update(_time: number, delta: number): void {
+    // Spin the player prefab instances continuously.
+    const registry = getEntityRegistry(this);
+    if (registry) {
+      for (const go of registry.byPrefabId('player')) {
+        (go as unknown as Phaser.GameObjects.Components.Transform).angle += 180 * (delta / 1000);
+      }
+    }
   }
 }
