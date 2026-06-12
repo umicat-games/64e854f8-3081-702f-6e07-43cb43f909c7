@@ -18,5 +18,21 @@
       "height": 720
     }
   },
-  "entities": []
+  "entities": [
+    {
+      "id": "e-mqacwrpd-pd18",
+      "kind": "rect",
+      "transform": {
+        "x": 463.25045835427716,
+        "y": 566.5136616881973,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "depth": 10
+      },
+      "width": 517,
+      "height": 64,
+      "fillColor": "#d8b146"
+    }
+  ]
 }
