@@ -23,7 +23,7 @@ import { GAME_WIDTH, GAME_HEIGHT } from '../config';
 export class GameScene extends Phaser.Scene {
   private sceneId!: string;
   private spinningRect?: Phaser.GameObjects.Rectangle;
-  private movingRect?: Phaser.GameObjects.Rectangle;
+  private movingRects: Phaser.GameObjects.Rectangle[] = [];
 
   constructor() {
     super({ key: 'GameScene' });
@@ -53,13 +53,9 @@ export class GameScene extends Phaser.Scene {
       this.spinningRect = rectObj as Phaser.GameObjects.Rectangle;
     }
 
-    // level-2: auto-move the player1 prefab rightward until the screen edge
-    if (this.sceneId === 'level-2') {
-      const player1Entities = registry?.byPrefabId('player1') ?? [];
-      if (player1Entities.length > 0) {
-        this.movingRect = player1Entities[0] as Phaser.GameObjects.Rectangle;
-      }
-    }
+    // player1 type: auto-move rightward until the screen edge. Type behavior
+    // is scene-agnostic — every instance in whatever scene is loaded moves.
+    this.movingRects = (registry?.byPrefabId('player1') ?? []) as Phaser.GameObjects.Rectangle[];
   }
 
   update(_time: number, delta: number): void {
@@ -67,16 +63,14 @@ export class GameScene extends Phaser.Scene {
       this.spinningRect.angle += 90 * (delta / 1000); // 90 degrees per second
     }
 
-    // Move player1 rect rightward at 200 px/s; stop at the right screen edge
-    if (this.movingRect) {
+    // Move every player1 instance rightward at 200 px/s; stop at the edge.
+    for (const rect of this.movingRects) {
+      if (!rect.active) continue;
       const speed = 200; // pixels per second
-      const halfW = (this.movingRect.width * this.movingRect.scaleX) / 2;
+      const halfW = (rect.width * rect.scaleX) / 2;
       const maxX = GAME_WIDTH - halfW;
-      if (this.movingRect.x < maxX) {
-        this.movingRect.x = Math.min(
-          this.movingRect.x + speed * (delta / 1000),
-          maxX
-        );
+      if (rect.x < maxX) {
+        rect.x = Math.min(rect.x + speed * (delta / 1000), maxX);
       }
     }
   }
