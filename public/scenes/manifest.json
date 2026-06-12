@@ -10,6 +10,13 @@
       "type": "world",
       "file": "world/main.json",
       "hud": "game-hud"
+    },
+    {
+      "id": "scene1",
+      "name": "scene1",
+      "type": "world",
+      "file": "world/scene1.json",
+      "hud": "game-hud"
     }
   ],
   "huds": [
@@ -23,7 +30,9 @@
     {
       "id": "folder",
       "name": "New folder",
-      "sceneIds": []
+      "sceneIds": [
+        "scene1"
+      ]
     }
   ]
 }

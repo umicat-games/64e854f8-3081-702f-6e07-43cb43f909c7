@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "scene1",
+  "name": "scene1",
+  "type": "world",
+  "world": {
+    "width": 1280,
+    "height": 720,
+    "background": {
+      "color": "#1a1a2e"
+    }
+  },
+  "camera": {
+    "bounds": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "entities": []
+}
