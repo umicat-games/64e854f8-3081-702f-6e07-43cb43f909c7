@@ -22,19 +22,16 @@
   "entities": [
     {
       "id": "e-mqacugcs-4xku",
-      "kind": "rect",
-      "role": "spinner",
+      "kind": "prefab-ref",
+      "prefabId": "player",
       "transform": {
         "x": 504,
-        "y": 496,
+        "y": 497.16575588745343,
         "rotation": 0,
         "scaleX": 1,
         "scaleY": 1,
         "depth": 10
-      },
-      "width": 64,
-      "height": 64,
-      "fillColor": "#4662D8"
+      }
     }
   ]
 }
