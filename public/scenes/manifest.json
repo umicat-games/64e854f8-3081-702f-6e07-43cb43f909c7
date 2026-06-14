@@ -24,7 +24,7 @@
       "textureKey": "grass_tiles_v2",
       "path": "uploaded/grass_tiles_v2.png",
       "loadUrl": "https://unboxy-dev-local.s3.amazonaws.com/uploads/fea224f2-831e-4470-bd19-50dc3ed1ba6b/grass_tiles_v2.png",
-      "kind": "spritesheet",
+      "kind": "image",
       "tileset": {
         "cellSize": {
           "width": 16,
