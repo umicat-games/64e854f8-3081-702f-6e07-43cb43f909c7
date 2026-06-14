@@ -19,19 +19,5 @@
       "height": 720
     }
   },
-  "entities": [
-    {
-      "id": "e-mqe2xtwp-ih0t",
-      "kind": "tilemap-ref",
-      "tilemapId": "grass",
-      "transform": {
-        "x": 514.0670613198957,
-        "y": 348.3992112340701,
-        "rotation": 0,
-        "scaleX": 1,
-        "scaleY": 1,
-        "depth": 1
-      }
-    }
-  ]
+  "entities": []
 }
